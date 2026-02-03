@@ -9,11 +9,14 @@ export default function Hero() {
     const container = logoContainerRef.current;
     if (!container) return;
 
-    // Clone logos for infinite scroll effect
+    // Clone logos multiple times for seamless infinite scroll
     const scrollContent = container.querySelector(".logo-scroll");
     if (scrollContent) {
-      const clone = scrollContent.cloneNode(true);
-      container.appendChild(clone);
+      // Clone the content 3 times to ensure seamless looping
+      for (let i = 0; i < 3; i++) {
+        const clone = scrollContent.cloneNode(true);
+        container.appendChild(clone);
+      }
     }
   }, []);
 
@@ -27,7 +30,7 @@ export default function Hero() {
   ];
 
   return (
-    <section className="relative min-h-screen bg-[#0a0a0a] overflow-hidden">
+    <section className="relative min-h-screen bg-[rgb(10,10,10)] overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Orange smokey gradient - top right corner (reduced intensity) */}
@@ -62,126 +65,77 @@ export default function Hero() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 pt-32 pb-20 text-center">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-5 py-2 bg-white/5 border border-white/10 rounded-full mb-10 backdrop-blur-sm">
-          <span className="text-sm text-gray-300 tracking-wide">
-            InterviewAI Fuels Success
-          </span>
-        </div>
+      <div className="relative z-10 max-w-4xl mx-auto px-6 h-screen flex flex-col justify-between">
+        {/* Top Spacer */}
+        <div></div>
 
-        {/* Main Heading */}
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-light mb-8 leading-[1.1] tracking-tight">
-          <span className="text-white">Pioneering Cutting</span>
-          <br />
-          <span className="text-white">Edge Interview </span>
-          <span className="bg-gradient-to-r from-orange-400 via-orange-500 to-red-500 bg-clip-text text-transparent font-normal">
-            Preparation
-          </span>
-        </h1>
+        {/* Center Section */}
+        <div className="text-center">
+          {/* Main Heading */}
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold mb-5 leading-tight tracking-tight">
+            <span className="text-white">Land Your Dream job  </span>
+            <br />
+            <span className="bg-gradient-to-r from-orange-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
+              Interview
+            </span>
+          </h1>
 
-        {/* Subtitle */}
-        <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-          We develop innovative AI software that harnesses advanced technology to transform your interview skills,{" "}
-          <span className="text-white">streamline preparation</span>, and drive career growth.
-        </p>
+          {/* Subtitle */}
+          <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
+            Ace your interviews with AI-powered mock interviews, instant feedback, and personalized learning paths.
+          </p>
 
-        {/* CTA Button with orange smokey hover effect */}
-        <div className="mb-24">
-          <button className="group relative inline-flex items-center gap-3 px-8 py-4 bg-transparent border border-white/20 rounded-full transition-all duration-500 overflow-hidden">
-            {/* Orange glow effect on hover */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 via-orange-500/30 to-orange-600/20 blur-xl"></div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-orange-500/0 via-orange-500/20 to-orange-500/0 blur-2xl"></div>
-            </div>
-            {/* Button border glow on hover */}
-            <div className="absolute inset-0 rounded-full border border-orange-500/0 group-hover:border-orange-500/50 transition-all duration-500"></div>
-            <span className="relative text-white font-medium">Get Started</span>
-            <span className="relative text-gray-500 text-sm group-hover:text-gray-400 transition-colors">it&apos;s free</span>
+          {/* CTA Button */}
+          <button className="inline-flex items-center gap-2 px-8 py-3.5 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-orange-500/25">
+            <span>Get Started Free</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
           </button>
         </div>
 
-        {/* 3D Glowing Platform */}
-        <div className="relative h-32 mb-20">
-          {/* Main platform glow */}
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[500px] h-2 bg-gradient-to-r from-transparent via-orange-500 to-transparent rounded-full blur-sm"></div>
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[400px] h-1 bg-gradient-to-r from-transparent via-orange-400 to-transparent rounded-full"></div>
-          
-          {/* Platform reflection/surface */}
-          <div 
-            className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[600px] h-24"
-            style={{
-              background: `
-                radial-gradient(ellipse 100% 100% at 50% 0%, 
-                  rgba(249, 115, 22, 0.15) 0%, 
-                  rgba(249, 115, 22, 0.05) 40%, 
-                  transparent 70%
-                )
-              `,
-            }}
-          ></div>
-          
-          {/* Perspective lines */}
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-1 w-[450px] h-20 overflow-hidden">
-            <div 
-              className="absolute inset-0"
-              style={{
-                background: `
-                  linear-gradient(90deg, 
-                    transparent 0%, 
-                    rgba(249, 115, 22, 0.1) 20%,
-                    rgba(249, 115, 22, 0.2) 50%,
-                    rgba(249, 115, 22, 0.1) 80%,
-                    transparent 100%
-                  )
-                `,
-                clipPath: "polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)",
-              }}
-            ></div>
-            {/* Grid lines on platform */}
-            <div 
-              className="absolute inset-0 opacity-30"
-              style={{
-                backgroundImage: `
-                  linear-gradient(transparent 0%, transparent 49%, rgba(249, 115, 22, 0.3) 50%, transparent 51%, transparent 100%)
-                `,
-                backgroundSize: "100% 8px",
-                clipPath: "polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)",
-              }}
-            ></div>
-          </div>
 
-          {/* Center glow point */}
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-4 h-4 bg-orange-500 rounded-full blur-md"></div>
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-0.5 w-2 h-2 bg-white rounded-full"></div>
-        </div>
-
-        {/* Companies Section */}
-        <div className="relative max-w-4xl mx-auto">
-          <p className="text-sm text-gray-500 mb-8 text-center">
-            Making interviews effortless for{" "}
-            <span className="text-white">50,000+</span> job seekers
+        {/* Bottom Companies Section */}
+        <div className="relative max-w-4xl mx-auto w-full text-center pb-4">
+          <p className="text-sm text-gray-500 mb-4">
+            Trusted by <span className="text-white font-semibold">50,000+</span> professionals
           </p>
 
           {/* Logo Carousel - Centered */}
           <div 
             ref={logoContainerRef}
-            className="flex justify-center overflow-hidden"
+            className="flex justify-start overflow-hidden w-full"
             style={{
               maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
               WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
             }}
           >
-            <div className="logo-scroll flex items-center justify-center gap-12 md:gap-16 animate-scroll">
+            <div 
+              className="logo-scroll flex items-center gap-8 whitespace-nowrap"
+              style={{
+                animation: "scroll 30s linear infinite",
+                width: "fit-content",
+              }}
+            >
               {companyLogos.map((company, index) => (
                 <div
                   key={index}
-                  className="flex-shrink-0 text-lg md:text-xl font-semibold text-gray-600 hover:text-gray-400 transition-colors cursor-pointer tracking-wider"
+                  className="flex-shrink-0 text-sm md:text-base font-semibold text-gray-600 tracking-wider"
                 >
                   {company}
                 </div>
               ))}
             </div>
+            <style>{`
+              @keyframes scroll {
+                0% {
+                  transform: translateX(0);
+                }
+                100% {
+                  transform: translateX(-33.333%);
+                }
+              }
+            `}</style>
           </div>
         </div>
       </div>
