@@ -8,12 +8,12 @@ import CTA from "./components/landing/CTA";
 export default function Home() {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <Hero />
-      <Features />
+      {/* <Features />
       <HowItWorks />
       <CTA />
-      <Footer />
+      <Footer /> */}
     </>
   );
 }
