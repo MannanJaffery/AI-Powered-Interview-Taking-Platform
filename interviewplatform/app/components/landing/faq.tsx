@@ -13,6 +13,7 @@ const Faq = () => {
   const [openId, setOpenId] = useState<string | null>(null);
   const [glowPos, setGlowPos] = useState<{ x: number; y: number } | null>(null);
   const borderRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const animationRefs = useRef<{ [key: string]: { targetX: number; currentX: number; animFrameId: number | null } }>({});
 
   const faqData: FAQItem[] = [
     {
@@ -48,6 +49,8 @@ const Faq = () => {
 
   ];
 
+
+  
   const handleMouseMove = (e: ReactMouseEvent<HTMLDivElement>, id: string) => {
     const borderElement = borderRefs.current[id];
     if (!borderElement) return;
@@ -57,10 +60,46 @@ const Faq = () => {
     const y = e.clientY - rect.top;
 
     setGlowPos({ x, y });
+
+    // Initialize animation tracking for this item if needed
+    if (!animationRefs.current[id]) {
+      animationRefs.current[id] = { targetX: x, currentX: x, animFrameId: null };
+    } else {
+      animationRefs.current[id].targetX = x;
+    }
+
+    // Cancel any existing animation frame for this item
+    if (animationRefs.current[id].animFrameId !== null) {
+      cancelAnimationFrame(animationRefs.current[id].animFrameId!);
+    }
+
+    // Start smooth animation
+    const animate = () => {
+      const anim = animationRefs.current[id];
+      if (!anim) return;
+
+      const lerp = 0.18;
+      anim.currentX += (anim.targetX - anim.currentX) * lerp;
+
+      borderElement.style.setProperty('--x', `${anim.currentX}px`);
+
+      if (Math.abs(anim.targetX - anim.currentX) > 0.5) {
+        anim.animFrameId = requestAnimationFrame(animate);
+      } else {
+        anim.animFrameId = null;
+      }
+    };
+
+    animationRefs.current[id].animFrameId = requestAnimationFrame(animate);
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (id: string) => {
     setGlowPos(null);
+
+    // Cancel animation frame for this item
+    if (animationRefs.current[id]?.animFrameId !== null) {
+      cancelAnimationFrame(animationRefs.current[id].animFrameId!);
+    }
   };
 
   const toggle = (id: string) => {
@@ -136,6 +175,37 @@ const Faq = () => {
           transition: all 0.3s cubic-bezier(0.77, 0, 0.175, 1);
           display: inline-block;
         }
+
+        .border-row {
+          --x: 0px;
+          --size: 196px;
+          position: relative;
+        }
+
+        .border-row::before,
+        .border-row::after {
+          content: '';
+          position: absolute;
+          left: calc(var(--x) - var(--size) / 2);
+          width: var(--size);
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.8), transparent);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .border-row::before {
+          top: 0;
+        }
+
+        .border-row::after {
+          bottom: 0;
+        }
+
+        .border-row:hover::before,
+        .border-row:hover::after {
+          opacity: 1;
+        }
       `}</style>
 
       <div className="max-w-5xl mx-auto">
@@ -171,8 +241,8 @@ const Faq = () => {
                     if (el) borderRefs.current[item.id] = el;
                   }}
                   onMouseMove={(e) => handleMouseMove(e, item.id)}
-                  onMouseLeave={handleMouseLeave}
-                  className="relative"
+                  onMouseLeave={() => handleMouseLeave(item.id)}
+                  className="relative border-row"
                 >
                   {/* Top Border */}
                   <div className="relative h-px bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800">
