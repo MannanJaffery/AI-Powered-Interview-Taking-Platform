@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, MouseEvent as ReactMouseEvent } from "react";
+import { useState } from "react";
+import { usePointerTracker } from "@/app/hooks/usePointerTracker";
 
 interface FAQItem {
   id: string;
@@ -11,9 +12,7 @@ interface FAQItem {
 
 const Faq = () => {
   const [openId, setOpenId] = useState<string | null>(null);
-  const [glowPos, setGlowPos] = useState<{ x: number; y: number } | null>(null);
-  const borderRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-  const animationRefs = useRef<{ [key: string]: { targetX: number; currentX: number; animFrameId: number | null } }>({});
+  usePointerTracker();
 
   const faqData: FAQItem[] = [
     {
@@ -49,59 +48,6 @@ const Faq = () => {
 
   ];
 
-
-  
-  const handleMouseMove = (e: ReactMouseEvent<HTMLDivElement>, id: string) => {
-    const borderElement = borderRefs.current[id];
-    if (!borderElement) return;
-
-    const rect = borderElement.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    setGlowPos({ x, y });
-
-    // Initialize animation tracking for this item if needed
-    if (!animationRefs.current[id]) {
-      animationRefs.current[id] = { targetX: x, currentX: x, animFrameId: null };
-    } else {
-      animationRefs.current[id].targetX = x;
-    }
-
-    // Cancel any existing animation frame for this item
-    if (animationRefs.current[id].animFrameId !== null) {
-      cancelAnimationFrame(animationRefs.current[id].animFrameId!);
-    }
-
-    // Start smooth animation
-    const animate = () => {
-      const anim = animationRefs.current[id];
-      if (!anim) return;
-
-      const lerp = 0.18;
-      anim.currentX += (anim.targetX - anim.currentX) * lerp;
-
-      borderElement.style.setProperty('--x', `${anim.currentX}px`);
-
-      if (Math.abs(anim.targetX - anim.currentX) > 0.5) {
-        anim.animFrameId = requestAnimationFrame(animate);
-      } else {
-        anim.animFrameId = null;
-      }
-    };
-
-    animationRefs.current[id].animFrameId = requestAnimationFrame(animate);
-  };
-
-  const handleMouseLeave = (id: string) => {
-    setGlowPos(null);
-
-    // Cancel animation frame for this item
-    if (animationRefs.current[id]?.animFrameId !== null) {
-      cancelAnimationFrame(animationRefs.current[id].animFrameId!);
-    }
-  };
-
   const toggle = (id: string) => {
     setOpenId(openId === id ? null : id);
   };
@@ -109,11 +55,6 @@ const Faq = () => {
   return (
     <section className="relative w-full bg-[#0a0a0a] py-20 px-6">
       <style>{`
-        @keyframes quinticEase {
-          0% { opacity: 0; transform: translateX(-20px); }
-          100% { opacity: 1; transform: translateX(0); }
-        }
-
         @keyframes fadeInUp {
           0% { 
             opacity: 0; 
@@ -136,31 +77,13 @@ const Faq = () => {
           }
         }
 
-        .faq-item-expanded {
-          animation: quinticEase 0.6s cubic-bezier(0.77, 0, 0.175, 1) forwards;
-        }
-
-        .glow-effect {
-          pointer-events: none;
-          position: absolute;
-          width: 20px;
-          height: 20px;
-          background: radial-gradient(circle, rgba(249, 115, 22, 0.6) 0%, rgba(249, 115, 22, 0.2) 70%, transparent 100%);
-          border-radius: 50%;
-          filter: blur(8px);
-          transition: none;
-        }
-
-        .glow-top {
-          top: -10px;
-          left: 0;
-          transform: translateX(calc(var(--mouse-x, 0) - 10px));
-        }
-
-        .glow-bottom {
-          bottom: -10px;
-          left: 0;
-          transform: translateX(calc(var(--mouse-x, 0) - 10px));
+        @keyframes smoothScale {
+          from {
+            transform: scale(0.99);
+          }
+          to {
+            transform: scale(1);
+          }
         }
 
         .split-pane-answer {
@@ -176,35 +99,14 @@ const Faq = () => {
           display: inline-block;
         }
 
-        .border-row {
-          --x: 0px;
-          --size: 196px;
+        .faq-card {
           position: relative;
+          border-radius: 0.5rem;
+          transition: all 0.3s cubic-bezier(0.77, 0, 0.175, 1);
         }
 
-        .border-row::before,
-        .border-row::after {
-          content: '';
-          position: absolute;
-          left: calc(var(--x) - var(--size) / 2);
-          width: var(--size);
-          height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.8), transparent);
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
-
-        .border-row::before {
-          top: 0;
-        }
-
-        .border-row::after {
-          bottom: 0;
-        }
-
-        .border-row:hover::before,
-        .border-row:hover::after {
-          opacity: 1;
+        .faq-card:hover {
+          animation: smoothScale 0.3s ease-out forwards;
         }
       `}</style>
 
@@ -214,7 +116,7 @@ const Faq = () => {
           <h2 className="text-5xl md:text-6xl font-semibold mb-4 leading-tight">
             <span className="text-white">Frequently Asked</span>
             <br />
-            <span className="bg-gradient-to-r from-orange-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-orange-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
               Questions
             </span>
           </h2>
@@ -233,41 +135,31 @@ const Faq = () => {
                 key={item.id}
                 className={`relative transition-all duration-500 ${
                   isOpen ? "min-h-64" : "min-h-auto"
-                } ${index !== faqData.length - 1 ? "" : ""}`}
+                }`}
               >
-                {/* Border Container */}
-                <div
-                  ref={(el) => {
-                    if (el) borderRefs.current[item.id] = el;
-                  }}
-                  onMouseMove={(e) => handleMouseMove(e, item.id)}
-                  onMouseLeave={() => handleMouseLeave(item.id)}
-                  className="relative border-row"
+                {/* Glow Border Card Container */}
+                <div className="glow-border faq-card"
+                  style={
+                    {
+                      '--bw': '2px',
+                      '--spot-hsl': '39, 94%',
+                      '--spot-alpha': '0.6',
+                      '--spot-fade': '100px',
+                    } as React.CSSProperties
+                  }
                 >
-                  {/* Top Border */}
-                  <div className="relative h-px bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800">
-                    {glowPos && (
-                      <div
-                        className="glow-top"
-                        style={{
-                          "--mouse-x": `${glowPos.x}px`,
-                        } as React.CSSProperties}
-                      />
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  {!isOpen ? (
-                    // Collapsed State
-                    <div className="px-6 py-6 flex items-center justify-between gap-4 cursor-pointer group hover:bg-white/2 transition-all duration-300">
+                  <div>
+                    {!isOpen ? (
+                      // Collapsed State
+                      <div className="px-6 py-6 flex items-center justify-between gap-4 cursor-pointer group hover:bg-white/5 transition-all duration-300">
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-lg md:text-xl font-semibold text-white ">
+                        <h3 className="text-lg md:text-xl font-semibold text-white">
                           {item.question}
                         </h3>
                       </div>
                       <button
                         onClick={() => toggle(item.id)}
-                        className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 group-hover:text-orange-500 transition-colors duration-300 font-light text-2xl cursor-pointer toggle-button"
+                        className="shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 group-hover:text-orange-500 transition-colors duration-300 font-light text-2xl cursor-pointer toggle-button"
                       >
                         (+)
                       </button>
@@ -277,7 +169,7 @@ const Faq = () => {
                     <div className="px-6 py-6">
                       <div className="flex gap-8 items-start">
                         {/* Left: Question (Anchored) */}
-                        <div className="flex-shrink-0 w-full md:w-2/5">
+                        <div className="shrink-0 w-full md:w-2/5">
                           <p className="text-sm text-orange-500 font-semibold mb-2 uppercase tracking-wider">
                             {item.category}
                           </p>
@@ -305,24 +197,13 @@ const Faq = () => {
                       <div className="flex justify-end mt-6">
                         <button
                           onClick={() => toggle(item.id)}
-                          className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-orange-500 transition-colors duration-300 font-light text-2xl cursor-pointer toggle-button"
+                          className="shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-orange-500 transition-colors duration-300 font-light text-2xl cursor-pointer toggle-button"
                         >
                           (−)
                         </button>
                       </div>
                     </div>
                   )}
-
-                  {/* Bottom Border */}
-                  <div className="relative h-px bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800">
-                    {glowPos && (
-                      <div
-                        className="glow-bottom"
-                        style={{
-                          "--mouse-x": `${glowPos.x}px`,
-                        } as React.CSSProperties}
-                      />
-                    )}
                   </div>
                 </div>
               </div>

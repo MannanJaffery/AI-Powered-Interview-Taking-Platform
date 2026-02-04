@@ -182,3 +182,54 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(to bottom, #fb923c, #f97316);
 }
+
+/* Global Pointer Tracking Variables */
+:root {
+  --mx: 0px;
+  --my: 0px;
+  --bw: 2px;
+  --spot-hsl: 39, 94%;
+  --spot-alpha: 0.6;
+  --spot-fade: 100px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --spot-alpha: 0.2;
+  }
+}
+
+/* Glow Border Class */
+.glow-border {
+  position: relative;
+  border-radius: 0.5rem;
+  border: 1px solid;
+  border-color: hsl(var(--spot-hsl), calc(var(--spot-alpha) * 100%));
+  transition: border-color 0.1s ease-out;
+  background-clip: padding-box;
+}
+
+.glow-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: radial-gradient(
+    circle at calc(var(--mx) * 1px) calc(var(--my) * 1px),
+    hsl(var(--spot-hsl), var(--spot-alpha)),
+    transparent var(--spot-fade)
+  );
+  border-radius: 0.5rem;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Ensure content appears above the glow */
+.glow-border > div {
+  position: relative;
+  z-index: 1;
+  background: #0a0a0a;
+  border-radius: 0.5rem;
+}
