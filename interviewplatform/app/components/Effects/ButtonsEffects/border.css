@@ -1,0 +1,40 @@
+@keyframes border-spin {
+  0% { transform: rotate(0deg); }
+  35% { transform: rotate(180deg); }
+  50% { transform: rotate(180deg); }
+  85% { transform: rotate(360deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.fx-border-trace {
+  position: relative;
+  display: inline-block;
+  border-radius: 12px;
+  padding: 1px; /* border thickness */
+}
+.fx-border-trace::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 3px;
+  background: conic-gradient(#601609 0deg 90deg, transparent 90deg 360deg);
+  transform-origin: center;
+  animation: border-spin 3s linear infinite;
+}
+
+@keyframes rotate-border {
+     0% { 
+        transform: rotate(0deg); 
+    } 
+    100% { 
+        transform: rotate(360deg); }
+     }
+
+     
+.fx-border-inner {
+  position: relative;
+  z-index: 1;
+  border-radius: 12px;
+  background-color: black;
+}

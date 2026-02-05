@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { Separator } from "@/components/ui/separator";
 
 interface FAQItem {
   id: string;
@@ -107,11 +108,11 @@ const Faq = () => {
         }
 
         .split-pane-answer {
-          animation: slideUpSmooth 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          animation: slideUpSmooth 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         .category-animate {
-          animation: categorySlide 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          animation: categorySlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         .faq-card {
@@ -208,18 +209,18 @@ const Faq = () => {
         /* FAQ Content Transition - Smooth bottom to top */
         .faq-content-wrapper {
           overflow: hidden;
-          transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1), 
-                      opacity 0.5s ease;
+          transition: height 0.8s cubic-bezier(0.22, 1, 0.36, 1), 
+                      opacity 0.6s ease;
         }
 
         .faq-content-inner {
           transform: translateY(0);
-          transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-                      opacity 0.5s ease;
+          transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                      opacity 0.6s ease;
         }
 
         .faq-content-wrapper[data-open="false"] .faq-content-inner {
-          transform: translateY(40px);
+          transform: translateY(20px);
           opacity: 0;
         }
 
@@ -291,16 +292,16 @@ const Faq = () => {
                   <div>
                     {/* Header - Always visible */}
                     <div 
-                      className="faq-header px-6 py-6 flex items-center justify-between gap-4 cursor-pointer"
+                      className="faq-header px-7 py-5 flex items-center justify-between gap-4 cursor-pointer"
                       onClick={() => toggle(item.id)}
                     >
                       <div className="flex-1 min-w-0">
-                        {isOpen && (
+                        {/* {isOpen && (
                           <p className="category-animate text-sm text-orange-500 font-semibold mb-2 uppercase tracking-wider">
                             {item.category}
                           </p>
-                        )}
-                        <h3 className={`question-text text-lg md:text-xl font-semibold text-white ${isOpen ? 'is-open' : ''}`}>
+                        )} */}
+                        <h3 className={`question-text text-base md:text-lg font-semibold text-white ${isOpen ? 'is-open' : ''}`}>
                           {item.question}
                         </h3>
                       </div>
@@ -320,6 +321,9 @@ const Faq = () => {
                       </button>
                     </div>
 
+                    {/* Separator */}
+                    <Separator className="bg-gradient-to-r from-transparent via-gray-700/50 to-transparent" />
+
                     {/* Expandable Content */}
                     <div 
                       ref={(el) => { contentRefs.current[item.id] = el; }}
@@ -330,12 +334,12 @@ const Faq = () => {
                         opacity: isOpen ? 1 : 0,
                       }}
                     >
-                      <div className="faq-content-inner px-6 pb-6">
+                      <div className="faq-content-inner px-7 py-5">
                         <div className="flex gap-8 items-start">
                           {/* Desktop: Answer on the right */}
                           <div className="hidden md:block md:w-2/5"></div>
                           <div className="flex-1">
-                            <p className="split-pane-answer text-base text-gray-300 leading-relaxed">
+                            <p className="split-pane-answer text-sm md:text-base text-gray-300 leading-relaxed">
                               {item.answer}
                             </p>
                           </div>
