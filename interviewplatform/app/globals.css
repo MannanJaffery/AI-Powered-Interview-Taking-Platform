@@ -4,12 +4,28 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+@font-face {
+  font-family: "Lato";
+  src: url("/fonts/Lato/Lato-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@font-face {
+  font-family: "Lato";
+  src: url("/fonts/Lato/Lato-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: url("/fonts/Lato/Lato-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,7 +38,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: "Lato", system-ui, -apple-system, sans-serif;
 }
 
 /* Custom Animations */
@@ -232,4 +248,69 @@ html {
   z-index: 1;
   background: #0a0a0a;
   border-radius: 0.5rem;
+}
+
+
+
+/* cta button */
+.button {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.05);
+  width: auto;
+  padding: 12px 32px;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  animation: rotate 5s linear infinite;
+}
+
+
+.button::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: inherit;
+  z-index: -1;
+  transition: all 0.3s;
+}
+
+
+
+.button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+.label {
+  position: relative;
+  z-index: 1;
+}
+
+.gradient-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 104%;
+  height: 108%;
+  overflow: hidden;
+  border-radius: inherit;
+  z-index: -2;
+  filter: blur(6px);
+  transition: all 0.3s;
 }

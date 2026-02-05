@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-
+import Button from "../common/Button";
+import { motion } from "framer-motion";
 export default function Hero() {
   const logoContainerRef = useRef<HTMLDivElement>(null);
 
@@ -72,6 +73,8 @@ export default function Hero() {
         {/* Center Section */}
         <div className="text-center">
           {/* Main Heading */}
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold mb-5 leading-tight tracking-tight">
             <span className="text-white">Land Your Dream job  </span>
             <br />
@@ -79,6 +82,7 @@ export default function Hero() {
               Interview
             </span>
           </h1>
+          </motion.div>
 
           {/* Subtitle */}
           <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
@@ -86,12 +90,9 @@ export default function Hero() {
           </p>
 
           {/* CTA Button */}
-          <button className="inline-flex items-center gap-2 px-8 py-3.5 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-orange-500/25">
-            <span>Get Started Free</span>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </button>
+          <div className="flex justify-center">
+            <Button label="Get Started" onClick={() => window.location.href = "/interview"} />
+          </div>
         </div>
 
 
