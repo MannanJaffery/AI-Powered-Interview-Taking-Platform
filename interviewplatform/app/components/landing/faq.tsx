@@ -101,7 +101,7 @@ const Faq = () => {
 
         .faq-card {
           position: relative;
-          border-radius: 0.5rem;
+          border-radius: 0;
           transition: all 0.3s cubic-bezier(0.77, 0, 0.175, 1);
         }
 

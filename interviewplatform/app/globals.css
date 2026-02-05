@@ -202,8 +202,11 @@ html {
 /* Glow Border Class */
 .glow-border {
   position: relative;
-  border-radius: 0.5rem;
-  border: 1px solid;
+  border-radius: 0;
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+  border-left: none;
+  border-right: none;
   border-color: hsl(var(--spot-hsl), calc(var(--spot-alpha) * 100%));
   transition: border-color 0.1s ease-out;
   background-clip: padding-box;
@@ -213,15 +216,15 @@ html {
   content: '';
   position: absolute;
   top: -2px;
-  left: -2px;
-  right: -2px;
+  left: 0;
+  right: 0;
   bottom: -2px;
   background: radial-gradient(
     circle at calc(var(--mx) * 1px) calc(var(--my) * 1px),
     hsl(var(--spot-hsl), var(--spot-alpha)),
     transparent var(--spot-fade)
   );
-  border-radius: 0.5rem;
+  border-radius: 0;
   pointer-events: none;
   z-index: -1;
 }
@@ -231,5 +234,5 @@ html {
   position: relative;
   z-index: 1;
   background: #0a0a0a;
-  border-radius: 0.5rem;
+  border-radius: 0;
 }
