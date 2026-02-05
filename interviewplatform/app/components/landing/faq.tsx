@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { usePointerTracker } from "@/app/hooks/usePointerTracker";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 interface FAQItem {
   id: string;
@@ -12,7 +11,21 @@ interface FAQItem {
 
 const Faq = () => {
   const [openId, setOpenId] = useState<string | null>(null);
-  usePointerTracker();
+  const [heights, setHeights] = useState<{ [key: string]: number }>({});
+  const contentRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  // Track mouse position relative to each card
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>, id: string) => {
+    const card = cardRefs.current[id];
+    if (card) {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mx', `${x}`);
+      card.style.setProperty('--my', `${y}`);
+    }
+  }, []);
 
   const faqData: FAQItem[] = [
     {
@@ -52,13 +65,29 @@ const Faq = () => {
     setOpenId(openId === id ? null : id);
   };
 
+  // Measure content heights for smooth animation
+  useEffect(() => {
+    const newHeights: { [key: string]: number } = {};
+    Object.keys(contentRefs.current).forEach((id) => {
+      const el = contentRefs.current[id];
+      if (el) {
+        newHeights[id] = el.scrollHeight;
+      }
+    });
+    setHeights(newHeights);
+  }, [openId]);
+
   return (
     <section className="relative w-full bg-[#0a0a0a] py-20 px-6">
       <style>{`
-        @keyframes fadeInUp {
+        @keyframes slideUpSmooth {
           0% { 
             opacity: 0; 
-            transform: translateY(20px);
+            transform: translateY(30px);
+          }
+          60% {
+            opacity: 0.8;
+            transform: translateY(5px);
           }
           100% { 
             opacity: 1; 
@@ -66,47 +95,150 @@ const Faq = () => {
           }
         }
 
-        @keyframes fadeOutDown {
+        @keyframes categorySlide {
           0% { 
-            opacity: 1; 
-            transform: translateY(0);
+            opacity: 0; 
+            transform: translateY(15px);
           }
           100% { 
-            opacity: 0; 
-            transform: translateY(20px);
-          }
-        }
-
-        @keyframes smoothScale {
-          from {
-            transform: scale(0.99);
-          }
-          to {
-            transform: scale(1);
+            opacity: 1; 
+            transform: translateY(0);
           }
         }
 
         .split-pane-answer {
-          animation: fadeInUp 0.7s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+          animation: slideUpSmooth 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
-        .split-pane-answer-exit {
-          animation: fadeOutDown 0.5s cubic-bezier(0.77, 0, 0.175, 1) forwards;
-        }
-
-        .toggle-button {
-          transition: all 0.3s cubic-bezier(0.77, 0, 0.175, 1);
-          display: inline-block;
+        .category-animate {
+          animation: categorySlide 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         .faq-card {
           position: relative;
-          border-radius: 0.5rem;
-          transition: all 0.3s cubic-bezier(0.77, 0, 0.175, 1);
+          border-radius: 0;
+          transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .faq-card:hover {
-          animation: smoothScale 0.3s ease-out forwards;
+        /* Bracket Animation Styles - Whole button rotates with symbol change */
+        .bracket-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0;
+          font-family: inherit;
+          transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                      color 0.3s ease;
+          transform-origin: center;
+        }
+
+        .bracket-left,
+        .bracket-right {
+          display: inline-block;
+          transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bracket-symbol {
+          display: inline-block;
+          position: relative;
+        }
+
+        /* Plus and minus symbols with crossfade during rotation */
+        .bracket-symbol .plus-icon,
+        .bracket-symbol .minus-icon {
+          transition: opacity 0.4s ease;
+        }
+
+        .bracket-symbol .plus-icon {
+          opacity: 1;
+        }
+
+        .bracket-symbol .minus-icon {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          opacity: 0;
+        }
+
+        /* When open - rotate whole button and swap symbols */
+        .bracket-btn.is-open {
+          transform: rotate(180deg);
+          color: #f97316;
+        }
+
+        .bracket-btn.is-open .bracket-symbol .plus-icon {
+          opacity: 0;
+        }
+
+        .bracket-btn.is-open .bracket-symbol .minus-icon {
+          opacity: 1;
+        }
+
+        /* Hover effect - brackets spread apart smoothly */
+        .bracket-btn:hover .bracket-left {
+          transform: translateX(-4px);
+        }
+
+        .bracket-btn:hover .bracket-right {
+          transform: translateX(4px);
+        }
+
+        .bracket-btn:hover {
+          color: #f97316;
+        }
+
+        .bracket-btn.is-open .bracket-left {
+          transform: translateX(-5px);
+        }
+
+        .bracket-btn.is-open .bracket-right {
+          transform: translateX(5px);
+        }
+
+        /* Hover when already open */
+        .bracket-btn.is-open:hover .bracket-left {
+          transform: translateX(-7px);
+        }
+
+        .bracket-btn.is-open:hover .bracket-right {
+          transform: translateX(7px);
+        }
+
+        /* FAQ Content Transition - Smooth bottom to top */
+        .faq-content-wrapper {
+          overflow: hidden;
+          transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1), 
+                      opacity 0.5s ease;
+        }
+
+        .faq-content-inner {
+          transform: translateY(0);
+          transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                      opacity 0.5s ease;
+        }
+
+        .faq-content-wrapper[data-open="false"] .faq-content-inner {
+          transform: translateY(40px);
+          opacity: 0;
+        }
+
+        .faq-content-wrapper[data-open="true"] .faq-content-inner {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        .faq-header {
+          transition: all 0.3s ease;
+        }
+
+        /* Question text slide animation when opening */
+        .question-text {
+          transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .question-text.is-open {
+          transform: translateY(-2px);
         }
       `}</style>
 
@@ -129,81 +261,87 @@ const Faq = () => {
         <div className="space-y-0">
           {faqData.map((item, index) => {
             const isOpen = openId === item.id;
+            const isNextOpen = faqData[index + 1] && openId === faqData[index + 1].id;
 
             return (
               <div
                 key={item.id}
-                className={`relative transition-all duration-500 ${
-                  isOpen ? "min-h-64" : "min-h-auto"
-                }`}
+                className="relative"
               >
                 {/* Glow Border Card Container */}
-                <div className="glow-border faq-card"
+                <div 
+                  ref={(el) => { cardRefs.current[item.id] = el; }}
+                  onMouseMove={(e) => handleMouseMove(e, item.id)}
+                  className={`glow-border faq-card ${isOpen ? 'is-open' : ''} ${isNextOpen ? 'next-is-open' : ''}`}
                   style={
                     {
                       '--bw': '2px',
-                      '--spot-hsl': '39, 94%',
-                      '--spot-alpha': '0.6',
-                      '--spot-fade': '100px',
+                      '--spot-hsl': '30, 100%',
+                      '--spot-alpha': '0.7',
+                      '--spot-fade': '120px',
+                      '--mx': '0',
+                      '--my': '0',
                     } as React.CSSProperties
                   }
                 >
+                  {/* Smokey glow elements */}
+                  <div className="glow-smoke"></div>
+                  <div className="glow-smoke glow-smoke-bottom"></div>
+                  
                   <div>
-                    {!isOpen ? (
-                      // Collapsed State
-                      <div className="px-6 py-6 flex items-center justify-between gap-4 cursor-pointer group hover:bg-white/5 transition-all duration-300">
+                    {/* Header - Always visible */}
+                    <div 
+                      className="faq-header px-6 py-6 flex items-center justify-between gap-4 cursor-pointer"
+                      onClick={() => toggle(item.id)}
+                    >
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-lg md:text-xl font-semibold text-white">
+                        {isOpen && (
+                          <p className="category-animate text-sm text-orange-500 font-semibold mb-2 uppercase tracking-wider">
+                            {item.category}
+                          </p>
+                        )}
+                        <h3 className={`question-text text-lg md:text-xl font-semibold text-white ${isOpen ? 'is-open' : ''}`}>
                           {item.question}
                         </h3>
                       </div>
                       <button
-                        onClick={() => toggle(item.id)}
-                        className="shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 group-hover:text-orange-500 transition-colors duration-300 font-light text-2xl cursor-pointer toggle-button"
+                        className={`bracket-btn shrink-0 w-12 h-10 flex items-center justify-center text-gray-400 font-light text-2xl cursor-pointer ${isOpen ? 'is-open' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggle(item.id);
+                        }}
                       >
-                        (+)
+                        <span className="bracket-left">(</span>
+                        <span className="bracket-symbol">
+                          <span className="plus-icon">+</span>
+                          <span className="minus-icon">−</span>
+                        </span>
+                        <span className="bracket-right">)</span>
                       </button>
                     </div>
-                  ) : (
-                    // Expanded State - Split Pane
-                    <div className="px-6 py-6">
-                      <div className="flex gap-8 items-start">
-                        {/* Left: Question (Anchored) */}
-                        <div className="shrink-0 w-full md:w-2/5">
-                          <p className="text-sm text-orange-500 font-semibold mb-2 uppercase tracking-wider">
-                            {item.category}
-                          </p>
-                          <h3 className="text-lg md:text-xl font-semibold text-white">
-                            {item.question}
-                          </h3>
+
+                    {/* Expandable Content */}
+                    <div 
+                      ref={(el) => { contentRefs.current[item.id] = el; }}
+                      className="faq-content-wrapper"
+                      data-open={isOpen ? "true" : "false"}
+                      style={{
+                        height: isOpen ? `${heights[item.id] || 'auto'}px` : '0px',
+                        opacity: isOpen ? 1 : 0,
+                      }}
+                    >
+                      <div className="faq-content-inner px-6 pb-6">
+                        <div className="flex gap-8 items-start">
+                          {/* Desktop: Answer on the right */}
+                          <div className="hidden md:block md:w-2/5"></div>
+                          <div className="flex-1">
+                            <p className="split-pane-answer text-base text-gray-300 leading-relaxed">
+                              {item.answer}
+                            </p>
+                          </div>
                         </div>
-
-                        {/* Right: Answer (Fade In) */}
-                        <div className="flex-1 hidden md:block">
-                          <p className="split-pane-answer text-base text-gray-300 leading-relaxed">
-                            {item.answer}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Mobile Answer */}
-                      <div className="md:hidden mt-6">
-                        <p className="split-pane-answer text-base text-gray-300 leading-relaxed">
-                          {item.answer}
-                        </p>
-                      </div>
-
-                      {/* Close Button */}
-                      <div className="flex justify-end mt-6">
-                        <button
-                          onClick={() => toggle(item.id)}
-                          className="shrink-0 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-orange-500 transition-colors duration-300 font-light text-2xl cursor-pointer toggle-button"
-                        >
-                          (−)
-                        </button>
                       </div>
                     </div>
-                  )}
                   </div>
                 </div>
               </div>
