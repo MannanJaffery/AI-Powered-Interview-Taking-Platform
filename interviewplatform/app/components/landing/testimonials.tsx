@@ -1,142 +1,186 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
+
 export default function Testimonials() {
   const testimonials = [
     {
+      name: "Angela Moss",
+      username: "@an4gel",
+      role: "Developer",
+      company: "upgrade",
+      date: "Dec 12, 2030",
+      text: "Before Mooni, managing our operations felt like juggling too many balls at once. Now, everything is consolidated into one simple yet powerful platform.",
+    },
+    {
+      name: "John Smith",
+      username: "@john_sm9",
+      role: "Developer",
+      company: "checkr",
+      date: "Nov 6, 2028",
+      text: "Mooni has completely revolutionized how our team works. The intuitive design and robust features allowed us to streamline complex workflows that used to take hours. We were able to onboard new team members in record time.",
+    },
+    {
       name: "Sarah Chen",
-      role: "Software Engineer at Google",
+      username: "@sarahc",
+      role: "Engineer",
       company: "Google",
-      rating: 5,
-      text: "InterviewAI helped me secure my dream role at Google. The AI feedback was incredibly specific and helped me refine my communication. I went from struggling with technical explanations to confidently discussing complex systems.",
-      avatar: "👩‍💼",
+      date: "Jan 21, 2026",
+      text: "InterviewAI helped me secure my dream role at Google. The AI feedback was incredibly specific and helped me refine my communication skills dramatically.",
     },
     {
       name: "Marcus Johnson",
-      role: "Product Manager at Meta",
+      username: "@marcusj",
+      role: "PM",
       company: "Meta",
-      rating: 5,
-      text: "The mock interviews felt incredibly realistic. I practiced 40+ interviews before my final interview at Meta. The analytics dashboard showed exactly where I needed to improve. This platform is worth every penny.",
-      avatar: "👨‍💼",
+      date: "Mar 15, 2027",
+      text: "The mock interviews felt incredibly realistic. I practiced 40+ interviews before my final round at Meta. The analytics showed exactly where I needed to improve.",
     },
     {
       name: "Emily Rodriguez",
-      role: "Data Scientist at Amazon",
+      username: "@emilyr",
+      role: "Data Scientist",
       company: "Amazon",
-      rating: 5,
-      text: "I was transitioning careers and felt completely unprepared. InterviewAI's adaptive questions prepared me for every angle. I landed my role at Amazon within 2 months of starting. Highly recommend!",
-      avatar: "👩‍🔬",
+      date: "Aug 9, 2027",
+      text: "I was transitioning careers and felt completely unprepared. The adaptive questions prepared me for every angle. I landed my role within 2 months of starting.",
     },
     {
       name: "David Thompson",
-      role: "Senior Engineer at Microsoft",
+      username: "@davidt",
+      role: "Senior Engineer",
       company: "Microsoft",
-      rating: 5,
-      text: "The real-time feedback on my interview performance was game-changing. I could see my confidence improving week over week. Microsoft noticed the difference during my interviews.",
-      avatar: "👨‍💻",
-    },
-    {
-      name: "Jessica Lee",
-      role: "Manager at Apple",
-      company: "Apple",
-      rating: 5,
-      text: "As someone transitioning to management, I needed to work on leadership communication. InterviewAI provided targeted practice that made all the difference in my Apple interviews.",
-      avatar: "👩‍💼",
-    },
-    {
-      name: "Ahmed Patel",
-      role: "Solutions Architect at AWS",
-      company: "AWS",
-      rating: 5,
-      text: "Outstanding platform. The AI interviewer asks follow-up questions just like real interviews. I felt prepared for anything. Passed my AWS interview rounds with confidence.",
-      avatar: "👨‍💼",
+      date: "Oct 3, 2028",
+      text: "The real-time feedback on my interview performance was game-changing. I could see my confidence improving week over week. Microsoft noticed the difference.",
     },
   ];
 
-  const renderStars = (rating: number) => {
-    return (
-      <div className="flex gap-1">
-        {[...Array(5)].map((_, i) => (
-          <span key={i} className={i < rating ? "text-yellow-400" : "text-gray-600"}>
-            ★
-          </span>
-        ))}
-      </div>
-    );
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 2);
+  };
+
+  useEffect(() => {
+    checkScroll();
+    const el = scrollRef.current;
+    if (el) {
+      el.addEventListener("scroll", checkScroll);
+      return () => el.removeEventListener("scroll", checkScroll);
+    }
+  }, []);
+
+  const scroll = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.querySelector<HTMLElement>(".testimonial-card")?.offsetWidth ?? 400;
+    const gap = 32;
+    el.scrollBy({ left: dir === "left" ? -(cardWidth + gap) : cardWidth + gap, behavior: "smooth" });
   };
 
   return (
     <section id="testimonials" className="relative w-full bg-[#0a0a0a] py-20 px-6">
-      <style>{`
-        @keyframes fadeInUp {
-          0% { 
-            opacity: 0; 
-            transform: translateY(20px);
-          }
-          100% { 
-            opacity: 1; 
-            transform: translateY(0);
-          }
-        }
-
-        .testimonial-card {
-          animation: fadeInUp 0.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
-          opacity: 0;
-        }
-
-        .testimonial-card:nth-child(1) { animation-delay: 0.1s; }
-        .testimonial-card:nth-child(2) { animation-delay: 0.2s; }
-        .testimonial-card:nth-child(3) { animation-delay: 0.3s; }
-        .testimonial-card:nth-child(4) { animation-delay: 0.4s; }
-        .testimonial-card:nth-child(5) { animation-delay: 0.5s; }
-        .testimonial-card:nth-child(6) { animation-delay: 0.6s; }
-      `}</style>
-
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
+          <span className="inline-block text-sm tracking-widest uppercase text-orange-400 mb-4">Real Feedback</span>
           <h2 className="text-5xl md:text-6xl font-semibold mb-4 leading-tight">
-            <span className="text-white">Trusted by</span>
-            <br />
+            <span className="text-white">Our </span>
             <span className="bg-linear-to-r from-orange-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
-              Top Professionals
+              Reviews
             </span>
           </h2>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Join thousands of engineers, managers, and professionals who've successfully landed roles at leading companies
+            Real stories from professionals transforming their interview preparation with our platform.
           </p>
         </div>
 
-        {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="testimonial-card backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-orange-500/30 transition-all duration-300 flex flex-col"
-            >
-              {/* Stars */}
-              <div className="mb-4">
-                {renderStars(testimonial.rating)}
-              </div>
+        {/* Testimonials Carousel */}
+        <div className="relative">
+          {/* Cards Container */}
+          <div
+            ref={scrollRef}
+            className="flex gap-8 overflow-x-auto scroll-smooth no-scrollbar pb-4 px-2"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
+            {testimonials.map((t, i) => (
+              <div
+                key={i}
+                className="testimonial-card flex-shrink-0 w-[480px] border border-white/[0.08] rounded-2xl p-7 flex flex-col gap-6 backdrop-blur-[12px] transition-colors duration-300"
+                style={{
+                  backgroundColor: "rgba(24, 24, 24, 0.85)",
+                  boxShadow:
+                    "inset 0 1px 2px rgba(255,255,255,0.08), inset 0 0.5px 0.5px rgba(255,255,255,0.12), 0 1px 2px -1px rgba(26,25,37,0.04), 0 1px 1px rgba(26,25,37,0.04), 0 0.5px 0.5px rgba(26,25,37,0.04)",
+                }}
+              >
+                {/* Top: Name + Role Badge */}
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h4 className="text-white text-xl font-bold tracking-tight">{t.name}</h4>
+                    <p className="text-gray-500 text-sm mt-0.5">{t.username}</p>
+                  </div>
+                  <span
+                    className="text-xs text-white/90 rounded-full px-3 py-1 mt-1 font-medium"
+                    style={{
+                      backgroundColor: "rgba(255,255,255,0.06)",
+                      boxShadow:
+                        "inset 0 1px 2px rgba(255,255,255,0.08), inset 0 0.5px 0.5px rgba(255,255,255,0.12), 0 1px 2px -1px rgba(26,25,37,0.04), 0 1px 1px rgba(26,25,37,0.04), 0 0.5px 0.5px rgba(26,25,37,0.04)",
+                    }}
+                  >
+                    {t.role}
+                  </span>
+                </div>
 
-              {/* Quote */}
-              <p className="text-gray-200 leading-relaxed mb-6 grow italic">
-                "{testimonial.text}"
-              </p>
+                {/* Review Text */}
+                <p className="text-[#a0a0a0] text-[15px] leading-[1.8] flex-grow">{t.text}</p>
 
-              {/* Divider */}
-              <div className="w-full h-px bg-linear-to-r from-transparent via-gray-700 to-transparent mb-6" />
-
-              {/* Author */}
-              <div className="flex items-center gap-4">
-                <div className="text-4xl">{testimonial.avatar}</div>
-                <div>
-                  <h4 className="text-white font-semibold">{testimonial.name}</h4>
-                  <p className="text-sm text-gray-400">{testimonial.role}</p>
-                  <p className="text-xs text-orange-400 font-medium">{testimonial.company}</p>
+                {/* Bottom: Company + Date */}
+                <div className="flex items-end justify-between mt-auto pt-2">
+                  <span className="text-white font-bold text-lg tracking-wide">{t.company}</span>
+                  <span className="text-gray-500 text-sm">{t.date}</span>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <button
+              onClick={() => scroll("left")}
+              disabled={!canScrollLeft}
+              className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all duration-200 ${
+                canScrollLeft
+                  ? "border-white/20 text-white hover:bg-white/10 hover:border-orange-500/40 cursor-pointer"
+                  : "border-white/10 text-gray-600 cursor-not-allowed"
+              }`}
+              aria-label="Previous review"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              disabled={!canScrollRight}
+              className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all duration-200 ${
+                canScrollRight
+                  ? "border-white/20 text-white hover:bg-white/10 hover:border-orange-500/40 cursor-pointer"
+                  : "border-white/10 text-gray-600 cursor-not-allowed"
+              }`}
+              aria-label="Next review"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Stats Section */}
@@ -161,6 +205,12 @@ export default function Testimonials() {
           </div>
         </div>
       </div>
+
+      {/* Hide scrollbar */}
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </section>
   );
 }
