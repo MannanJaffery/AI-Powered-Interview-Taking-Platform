@@ -1,40 +1,28 @@
-@keyframes border-spin {
-  0% { transform: rotate(0deg); }
-  35% { transform: rotate(180deg); }
-  50% { transform: rotate(180deg); }
-  85% { transform: rotate(360deg); }
-  100% { transform: rotate(360deg); }
+@keyframes border-gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .fx-border-trace {
   position: relative;
   display: inline-block;
   border-radius: 12px;
-  padding: 1px; /* border thickness */
-}
-.fx-border-trace::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
-  padding: 3px;
-  background: conic-gradient(#601609 0deg 90deg, transparent 90deg 360deg);
-  transform-origin: center;
-  animation: border-spin 3s linear infinite;
+  padding: 2px; /* border thickness */
+  background: linear-gradient(90deg, #ff6b35, #f7931e, #ff4444, #ff6b35, #f7931e);
+  background-size: 300% 100%;
+  animation: border-gradient-move 3s ease infinite;
 }
 
-@keyframes rotate-border {
-     0% { 
-        transform: rotate(0deg); 
-    } 
-    100% { 
-        transform: rotate(360deg); }
-     }
-
-     
 .fx-border-inner {
   position: relative;
   z-index: 1;
-  border-radius: 12px;
-  background-color: black;
+  border-radius: 10px;
+  background-color: rgb(10, 10, 10);
 }

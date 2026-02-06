@@ -1,16 +1,17 @@
 "use client";
 import Button from "../common/Button";
+import LogoLoop from "../common/LogoLoop";
 import { motion } from "framer-motion";
 
 
 export default function Hero() {
   const companyLogos = [
-    "Google",
-    "Microsoft",
-    "Amazon",
-    "Meta",
-    "Apple",
-    "Netflix",
+    { node: <span className="text-gray-400 font-semibold tracking-wider hover:text-white transition-colors">Google</span>, title: "Google" },
+    { node: <span className="text-gray-400 font-semibold tracking-wider hover:text-white transition-colors">Microsoft</span>, title: "Microsoft" },
+    { node: <span className="text-gray-400 font-semibold tracking-wider hover:text-white transition-colors">Amazon</span>, title: "Amazon" },
+    { node: <span className="text-gray-400 font-semibold tracking-wider hover:text-white transition-colors">Meta</span>, title: "Meta" },
+    { node: <span className="text-gray-400 font-semibold tracking-wider hover:text-white transition-colors">Apple</span>, title: "Apple" },
+    { node: <span className="text-gray-400 font-semibold tracking-wider hover:text-white transition-colors">Netflix</span>, title: "Netflix" },
   ];
 
   // Animation variants
@@ -99,54 +100,37 @@ export default function Hero() {
           <div className="absolute top-10 left-10 w-[250px] h-[250px] bg-linear-to-br from-orange-500/10 to-transparent rounded-full blur-[100px]"></div>
         </motion.div>
 
-        {/* White dots pattern across the background (reduced) */}
-        <div className="absolute inset-0">
-          {[...Array(25)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-[1px] h-[1px] bg-white/40 rounded-full"
-              style={{
-                left: `${10 + (i * 3.5) % 80}%`,
-                top: `${15 + (i * 7) % 70}%`,
-              }}
-              animate={{
-                opacity: [0.3, 0.8, 0.3],
-                scale: [1, 1.5, 1],
-              }}
-              transition={{
-                duration: 3 + (i % 3),
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: i * 0.1,
-              }}
-            ></motion.div>
-          ))}
-        </div>
+        {/* Animated Stars Background */}
+        <div id="stars"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
 
-        {/* Vertical lines on sides */}
-        <motion.div
-          className="absolute left-[15%] top-0 bottom-0 w-px bg-linear-to-b from-transparent via-white/10 to-transparent"
-          animate={{
-            opacity: [0.5, 1, 0.5],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        ></motion.div>
-        <motion.div
-          className="absolute right-[15%] top-0 bottom-0 w-px bg-linear-to-b from-transparent via-white/10 to-transparent"
-          animate={{
-            opacity: [0.5, 1, 0.5],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2,
-          }}
-        ></motion.div>
+        {/* Decorative Lines with Diamond on sides */}
+        {/* Left Line */}
+        <div className="absolute left-[8%] top-[17%] bottom-0 flex flex-col items-center">
+          {/* Top line segment */}
+          <div className="w-px h-[45%] bg-gradient-to-b from-transparent via-white/20 to-white/40"></div>
+          {/* Diamond/Star shape */}
+          <div className="relative w-4 h-4 flex items-center justify-center">
+            <div className="absolute w-3 h-3 rotate-45 border border-white/30"></div>
+            <div className="absolute w-1.5 h-1.5 rotate-45 bg-white/40"></div>
+          </div>
+          {/* Bottom line segment */}
+          <div className="w-px h-[45%] bg-gradient-to-b from-white/40 via-white/20 to-transparent"></div>
+        </div>
+        
+        {/* Right Line */}
+        <div className="absolute right-[8%] top-[17%] bottom-0 flex flex-col items-center">
+          {/* Top line segment */}
+          <div className="w-px h-[45%] bg-gradient-to-b from-transparent via-white/20 to-white/40"></div>
+          {/* Diamond/Star shape */}
+          <div className="relative w-4 h-4 flex items-center justify-center">
+            <div className="absolute w-3 h-3 rotate-45 border border-white/30"></div>
+            <div className="absolute w-1.5 h-1.5 rotate-45 bg-white/40"></div>
+          </div>
+          {/* Bottom line segment */}
+          <div className="w-px h-[45%] bg-gradient-to-b from-white/40 via-white/20 to-transparent"></div>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -185,8 +169,6 @@ export default function Hero() {
           <motion.div
             className="flex justify-center"
             variants={itemVariants}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
           >
             <div className="relative">
              <div className="fx-border-trace relative">
@@ -197,30 +179,14 @@ export default function Hero() {
 
 
               {/* Shadow/Glow Box Below Button */}
-              <motion.div
-                className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-48 h-12 rounded-full blur-2xl"
-                style={{
-                  background: "linear-gradient(135deg, rgba(249, 115, 22, 0.3) 0%, rgba(249, 115, 22, 0.1) 100%)",
-                  opacity: 1,
-                  transform: "translate3d(-50%, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg)",
-                  transformStyle: "preserve-3d",
-                }}
-                animate={{
-                  opacity: [0.4, 0.7, 0.4],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              ></motion.div>
+              
             </div>
           </motion.div>
         </motion.div>
 
         {/* Bottom Companies Section */}
         <motion.div
-          className="relative max-w-4xl mx-auto w-full text-center pb-4"
+          className="relative max-w-4xl mx-auto w-full text-center pb-4 overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
@@ -237,48 +203,17 @@ export default function Hero() {
           </p>
 
           {/* Logo Carousel - Centered */}
-          <div
-            className="flex justify-center overflow-hidden w-full"
-            style={{
-              maskImage: "linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
-              WebkitMaskImage: "linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
-            }}
-          >
-            <motion.div
-              className="logo-scroll flex items-center gap-12"
-              animate={{ x: [0, -2880] }}
-              transition={{
-                x: {
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  duration: 50,
-                  ease: "linear",
-                },
-              }}
-              style={{
-                display: "flex",
-                gap: ".8rem",
-              }}
-            >
-              {/* Render logos 3 times for seamless infinite loop */}
-              {[...companyLogos, ...companyLogos, ...companyLogos].map((company, index) => (
-                <motion.div
-                  key={index}
-                  className="shrink-0 text-sm md:text-base font-semibold text-gray-500 tracking-wider px-4"
-                  whileHover={{
-                    color: "#ffffff",
-                    scale: 1.1,
-                    transition: { duration: 0.2 },
-                  }}
-                  style={{
-                    minWidth: "fit-content",
-                  }}
-                >
-                  {company}
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+          <LogoLoop
+            logos={companyLogos}
+            speed={80}
+            direction="left"
+            logoHeight={20}
+            gap={48}
+            hoverSpeed={0}
+            fadeOut
+            fadeOutColor="#0a0a0a"
+            ariaLabel="Trusted companies"
+          />
         </motion.div>
       </div>
 
