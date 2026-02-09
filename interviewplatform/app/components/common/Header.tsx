@@ -1,9 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const navItems = [
+    { name: "Home", href: "#" },
+    { name: "About Us", href: "#about" },
+    { name: "Features", href: "#features" },
+    { name: "Pricing", href: "#pricing" },
+    { name: "Contact Us", href: "#contact" },
+  ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex flex-col items-center px-4 pt-4">
@@ -23,8 +38,18 @@ export default function Header() {
           <div className="relative w-8 h-8">
             <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg rotate-3 group-hover:rotate-6 transition-transform duration-300"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-orange-600 rounded-lg flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
               </svg>
             </div>
           </div>
@@ -33,13 +58,7 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-1">
-          {[
-            { name: "Home", href: "#" },
-            { name: "About Us", href: "#about" },
-            { name: "Features", href: "#features" },
-            { name: "Pricing", href: "#pricing" },
-            { name: "Contact Us", href: "#contact" },
-          ].map((item) => (
+          {navItems.map((item) => (
             <a
               key={item.name}
               href={item.href}
@@ -50,8 +69,35 @@ export default function Header() {
           ))}
         </div>
 
-        {/* Desktop CTA Button */}
-        <div className="hidden md:block flex-shrink-0">
+        {/* Desktop Auth / CTA */}
+        <div className="hidden md:flex items-center gap-2">
+          {/* Auth Buttons */}
+          <SignedOut>
+            <SignInButton>
+              <button className="px-4 py-2 text-sm font-medium text-white rounded-full transition-all duration-300 hover:opacity-90 hover:bg-white/[0.06]">
+                Sign In
+              </button>
+            </SignInButton>
+            <SignUpButton>
+              <button className="px-4 py-2 text-sm font-medium text-white rounded-full transition-all duration-300 hover:opacity-90 hover:bg-white/[0.06]">
+                Sign Up
+              </button>
+            </SignUpButton>
+          </SignedOut>
+
+          {/* User Menu */}
+          <SignedIn>
+            <UserButton
+              afterSignOutUrl="/"
+              appearance={{
+                elements: {
+                  userButtonBox: "bg-gray-800 text-white",
+                },
+              }}
+            />
+          </SignedIn>
+
+          {/* Optional CTA */}
           <button
             className="px-5 py-2 text-sm font-medium text-white rounded-full transition-all duration-300 hover:opacity-90"
             style={{
@@ -69,9 +115,21 @@ export default function Header() {
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           <div className="flex flex-col gap-1.5">
-            <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? "rotate-45 translate-y-2" : ""}`}></span>
-            <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? "opacity-0" : ""}`}></span>
-            <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""}`}></span>
+            <span
+              className={`w-6 h-0.5 bg-white transition-all duration-300 ${
+                isMobileMenuOpen ? "rotate-45 translate-y-2" : ""
+              }`}
+            ></span>
+            <span
+              className={`w-6 h-0.5 bg-white transition-all duration-300 ${
+                isMobileMenuOpen ? "opacity-0" : ""
+              }`}
+            ></span>
+            <span
+              className={`w-6 h-0.5 bg-white transition-all duration-300 ${
+                isMobileMenuOpen ? "-rotate-45 -translate-y-2" : ""
+              }`}
+            ></span>
           </div>
         </button>
       </nav>
@@ -79,7 +137,7 @@ export default function Header() {
       {/* Mobile Dropdown Menu */}
       <div
         className={`md:hidden w-full max-w-4xl overflow-hidden transition-all duration-400 ${
-          isMobileMenuOpen ? "max-h-[400px] opacity-100 mt-2" : "max-h-0 opacity-0 mt-0"
+          isMobileMenuOpen ? "max-h-[500px] opacity-100 mt-2" : "max-h-0 opacity-0 mt-0"
         }`}
       >
         <div
@@ -92,13 +150,7 @@ export default function Header() {
               "inset 0 1px 1px rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.4)",
           }}
         >
-          {[
-            { name: "Home", href: "#" },
-            { name: "About Us", href: "#about" },
-            { name: "Features", href: "#features" },
-            { name: "Pricing", href: "#pricing" },
-            { name: "Contact Us", href: "#contact" },
-          ].map((item) => (
+          {navItems.map((item) => (
             <a
               key={item.name}
               href={item.href}
@@ -107,7 +159,35 @@ export default function Header() {
               {item.name}
             </a>
           ))}
-          <div className="pt-3 mt-2 border-t border-white/[0.08]">
+
+          <div className="pt-3 mt-2 border-t border-white/[0.08] flex flex-col gap-2">
+            {/* Mobile Auth Buttons */}
+            <SignedOut>
+              <SignInButton>
+                <button className="w-full py-2.5 text-sm font-medium text-white rounded-full transition-all duration-300 hover:opacity-90 hover:bg-white/[0.06]">
+                  Sign In
+                </button>
+              </SignInButton>
+              <SignUpButton>
+                <button className="w-full py-2.5 text-sm font-medium text-white rounded-full transition-all duration-300 hover:opacity-90 hover:bg-white/[0.06]">
+                  Sign Up
+                </button>
+              </SignUpButton>
+            </SignedOut>
+
+            {/* Mobile User Menu */}
+            <SignedIn>
+              <UserButton
+                afterSignOutUrl="/"
+                appearance={{
+                  elements: {
+                    userButtonBox: "bg-gray-800 text-white w-full",
+                  },
+                }}
+              />
+            </SignedIn>
+
+            {/* Mobile CTA */}
             <button
               className="w-full py-2.5 text-sm font-medium text-white rounded-full transition-all duration-300 hover:opacity-90"
               style={{

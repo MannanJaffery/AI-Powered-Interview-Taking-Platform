@@ -1,28 +1,62 @@
-@keyframes border-gradient-move {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
+/* ── Rotating orange-light border ── */
+
+@property --border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin-border {
+  to {
+    --border-angle: 360deg;
   }
 }
 
 .fx-border-trace {
+  --border-size: 2px;
+  --border-radius: 12px;
+
   position: relative;
-  display: inline-block;
-  border-radius: 12px;
-  padding: 2px; /* border thickness */
-  background: linear-gradient(90deg, #ff6b35, #f7931e, #ff4444, #ff6b35, #f7931e);
-  background-size: 300% 100%;
-  animation: border-gradient-move 3s ease infinite;
+  display: inline-flex;
+  border-radius: var(--border-radius);
+  background: rgb(10, 10, 10);
+  isolation: isolate;
+}
+
+/* Rotating conic-gradient pseudo-element (the travelling light) */
+.fx-border-trace::before,
+.fx-border-trace::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--border-size) * -1);
+  border-radius: inherit;
+  z-index: -1;
+
+  background: conic-gradient(
+    from var(--border-angle),
+    transparent 30%,
+    rgba(255, 140, 50, 0.08) 40%,
+    rgba(255, 120, 30, 0.25) 45%,
+    #ff8c20 48%,
+    #ff6a00 50%,
+    #ff8c20 52%,
+    rgba(255, 120, 30, 0.25) 55%,
+    rgba(255, 140, 50, 0.08) 60%,
+    transparent 70%
+  );
+
+  animation: spin-border 3s linear infinite;
+}
+
+/* Soft glow layer (slightly larger, blurred) */
+.fx-border-trace::after {
+  filter: blur(8px);
+  opacity: 0.5;
 }
 
 .fx-border-inner {
   position: relative;
   z-index: 1;
-  border-radius: 10px;
+  border-radius: calc(var(--border-radius) - var(--border-size));
   background-color: rgb(10, 10, 10);
 }

@@ -171,12 +171,14 @@ export default function Hero() {
             variants={itemVariants}
           >
             <div className="relative">
-             <div className="fx-border-trace relative">
-  <div className="fx-border-inner relative z-10">
-    <Button label="Get Started" className="px-8 py-6 rounded-[12px]" />
-  </div>
-</div>
+              <div className="flex justify-center gap-5">
+                <div className="fx-border-trace">
+                  <div className="fx-border-inner">
+                    <Button label="Get Started" className="px-8 py-3.5 rounded-[10px]" />
+                  </div>
+                </div>
 
+              </div>
 
               {/* Shadow/Glow Box Below Button */}
               
@@ -198,7 +200,7 @@ export default function Hero() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.8 }}
             >
-              50,000+
+              1000+
             </motion.span> professionals
           </p>
 
