@@ -1,168 +1,224 @@
 "use client";
 
+import { useState } from "react";
+import { AutoScrollStack } from "./AutoScrollStack";
+import type { AutoScrollStackItem } from "./AutoScrollStack";
+import FeatureVisualizer from "./AutoScrollStack/FeatureVisualizer";
+import type { FeatureVisual } from "./AutoScrollStack/FeatureVisualizer";
+import {
+  BrainElectricity,
+  GraphUp,
+  BookStack,
+  PathArrow,
+  VideoCamera,
+  Trophy,
+} from "iconoir-react";
+
+/* ------------------------------------------------------------------ */
+/*  Icon wrapper – adds a glow ring + label around each Iconoir icon   */
+/* ------------------------------------------------------------------ */
+
+function IconVisual({
+  icon: Icon,
+  color,
+  label,
+}: {
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  color: string;
+  label: string;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-6">
+      {/* Outer glow rings */}
+      <div className="relative">
+        <div
+          className="absolute inset-0 rounded-full blur-2xl opacity-20"
+          style={{ background: color }}
+        />
+        <div
+          className="relative w-28 h-28 rounded-full flex items-center justify-center"
+          style={{
+            border: `2px solid ${color}30`,
+            background: `${color}08`,
+            boxShadow: `0 0 60px ${color}15, inset 0 0 30px ${color}05`,
+          }}
+        >
+          <div
+            className="w-20 h-20 rounded-full flex items-center justify-center"
+            style={{
+              border: `1.5px solid ${color}20`,
+              background: `${color}0a`,
+              color,
+            }}
+          >
+            <Icon
+              className="w-10 h-10"
+              strokeWidth={1.5}
+            />
+          </div>
+        </div>
+      </div>
+      <span
+        className="text-xs font-mono tracking-[0.25em] uppercase opacity-40"
+        style={{ color }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Feature data                                                       */
+/* ------------------------------------------------------------------ */
+
+const features: AutoScrollStackItem[] = [
+  {
+    id: "ai-tech",
+    title: "Advanced AI Technology",
+    timerColor: "from-blue-400 to-blue-600",
+    content: (
+      <p className="text-gray-400 leading-relaxed text-base md:text-lg font-light tracking-wide">
+        Our cutting-edge AI interviewer adapts to your response style, providing
+        real-world interview scenarios that match your target positions.
+      </p>
+    ),
+  },
+  {
+    id: "analytics",
+    title: "Real-time Analytics",
+    timerColor: "from-purple-400 to-purple-600",
+    content: (
+      <p className="text-gray-400 leading-relaxed text-base md:text-lg font-light tracking-wide">
+        Get comprehensive performance metrics including speaking pace, confidence
+        level, technical accuracy, and communication effectiveness.
+      </p>
+    ),
+  },
+  {
+    id: "questions",
+    title: "Extensive Question Library",
+    timerColor: "from-pink-400 to-pink-600",
+    content: (
+      <p className="text-gray-400 leading-relaxed text-base md:text-lg font-light tracking-wide">
+        Access 1000+ questions across 50+ industries and roles. Questions updated
+        monthly based on actual hiring trends.
+      </p>
+    ),
+  },
+  {
+    id: "learning-path",
+    title: "Personalized Learning Path",
+    timerColor: "from-cyan-400 to-cyan-600",
+    content: (
+      <p className="text-gray-400 leading-relaxed text-base md:text-lg font-light tracking-wide">
+        AI-powered recommendations create a customized learning journey based on
+        your strengths and weaknesses.
+      </p>
+    ),
+  },
+  {
+    id: "video",
+    title: "Video Recording & Playback",
+    timerColor: "from-orange-400 to-red-500",
+    content: (
+      <p className="text-gray-400 leading-relaxed text-base md:text-lg font-light tracking-wide">
+        Record your interviews, review your performance, and track improvements
+        over time with side-by-side comparisons.
+      </p>
+    ),
+  },
+  {
+    id: "badges",
+    title: "Achievement Badges",
+    timerColor: "from-green-400 to-emerald-600",
+    content: (
+      <p className="text-gray-400 leading-relaxed text-base md:text-lg font-light tracking-wide">
+        Unlock badges and milestones as you progress. Share your achievements
+        with your network.
+      </p>
+    ),
+  },
+];
+
+/* Visual data keyed to the same order as features */
+const featureVisuals: FeatureVisual[] = [
+  {
+    gradient: "from-blue-500/20 to-blue-700/10",
+    glowColor: "rgba(59,130,246,0.15)",
+    illustration: <IconVisual icon={BrainElectricity} color="#60a5fa" label="AI Engine" />,
+  },
+  {
+    gradient: "from-purple-500/20 to-purple-700/10",
+    glowColor: "rgba(139,92,246,0.15)",
+    illustration: <IconVisual icon={GraphUp} color="#a78bfa" label="Analytics" />,
+  },
+  {
+    gradient: "from-pink-500/20 to-pink-700/10",
+    glowColor: "rgba(244,114,182,0.15)",
+    illustration: <IconVisual icon={BookStack} color="#f472b6" label="Library" />,
+  },
+  {
+    gradient: "from-cyan-500/20 to-cyan-700/10",
+    glowColor: "rgba(34,211,238,0.15)",
+    illustration: <IconVisual icon={PathArrow} color="#22d3ee" label="Learning Path" />,
+  },
+  {
+    gradient: "from-orange-500/20 to-red-700/10",
+    glowColor: "rgba(251,146,60,0.15)",
+    illustration: <IconVisual icon={VideoCamera} color="#fb923c" label="Recording" />,
+  },
+  {
+    gradient: "from-green-500/20 to-emerald-700/10",
+    glowColor: "rgba(52,211,153,0.15)",
+    illustration: <IconVisual icon={Trophy} color="#34d399" label="Achievements" />,
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Section                                                            */
+/* ------------------------------------------------------------------ */
+
 export default function FeaturesSection() {
-  const features = [
-    {
-      icon: "🤖",
-      title: "Advanced AI Technology",
-      description: "Our cutting-edge AI interviewer adapts to your response style, providing real-world interview scenarios that match your target positions.",
-      gradient: "from-blue-500/20 to-blue-600/20",
-    },
-    {
-      icon: "📊",
-      title: "Real-time Analytics",
-      description: "Get comprehensive performance metrics including speaking pace, confidence level, technical accuracy, and communication effectiveness.",
-      gradient: "from-purple-500/20 to-purple-600/20",
-    },
-    {
-      icon: "📚",
-      title: "Extensive Question Library",
-      description: "Access 1000+ questions across 50+ industries and roles. Questions updated monthly based on actual hiring trends.",
-      gradient: "from-pink-500/20 to-pink-600/20",
-    },
-    {
-      icon: "🎯",
-      title: "Personalized Learning Path",
-      description: "AI-powered recommendations create a customized learning journey based on your strengths and weaknesses.",
-      gradient: "from-cyan-500/20 to-cyan-600/20",
-    },
-    {
-      icon: "🎬",
-      title: "Video Recording & Playback",
-      description: "Record your interviews, review your performance, and track improvements over time with side-by-side comparisons.",
-      gradient: "from-orange-500/20 to-orange-600/20",
-    },
-    {
-      icon: "🏆",
-      title: "Achievement Badges",
-      description: "Unlock badges and milestones as you progress. Share your achievements with your network.",
-      gradient: "from-green-500/20 to-green-600/20",
-    },
-  ];
+  const [activeIdx, setActiveIdx] = useState(0);
 
   return (
     <section className="relative w-full bg-[#0a0a0a] py-20 px-6">
-      <style>{`
-        @keyframes slideInLeft {
-          0% {
-            opacity: 0;
-            transform: translateX(-30px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes slideInRight {
-          0% {
-            opacity: 0;
-            transform: translateX(30px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        .feature-item-left {
-          animation: slideInLeft 0.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
-          opacity: 0;
-        }
-
-        .feature-item-right {
-          animation: slideInRight 0.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
-          opacity: 0;
-        }
-
-        .feature-item-left:nth-child(1) { animation-delay: 0.1s; }
-        .feature-item-left:nth-child(3) { animation-delay: 0.3s; }
-        .feature-item-left:nth-child(5) { animation-delay: 0.5s; }
-
-        .feature-item-right:nth-child(2) { animation-delay: 0.2s; }
-        .feature-item-right:nth-child(4) { animation-delay: 0.4s; }
-        .feature-item-right:nth-child(6) { animation-delay: 0.6s; }
-      `}</style>
-
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-20">
+        <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-semibold mb-4 leading-tight">
             <span className="text-white">Powerful</span>
             <br />
-            <span className="bg-linear-to-r from-orange-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-orange-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
               Features Built for You
             </span>
           </h2>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            Everything you need to master your interview skills with advanced AI technology and comprehensive analytics
+            Everything you need to master your interview skills with advanced AI
+            technology and comprehensive analytics
           </p>
         </div>
 
-        {/* Two Column Layout with Alternating Cards */}
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Left Column */}
-          <div className="space-y-8">
-            {features
-              .filter((_, i) => i % 2 === 0)
-              .map((feature, idx) => (
-                <div
-                  key={idx}
-                  className="feature-item-left group relative"
-                  style={{ animationDelay: `${idx * 0.2}s` }}
-                >
-                  <div className={`absolute inset-0 bg-linear-to-br ${feature.gradient} rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                  <div className="relative backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-orange-500/30 transition-all duration-300">
-                    <div className="flex gap-6 items-start">
-                      <div className="text-5xl shrink-0 group-hover:scale-110 transition-transform duration-300">
-                        {feature.icon}
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-semibold text-white mb-2">
-                          {feature.title}
-                        </h3>
-                        <p className="text-gray-300 leading-relaxed">
-                          {feature.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+        {/* Split layout: accordion left, visualizer right */}
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+          {/* Left — Accordion */}
+          <div>
+            <AutoScrollStack
+              items={features}
+              duration={10_000}
+              onActiveChange={setActiveIdx}
+            />
           </div>
 
-          {/* Right Column */}
-          <div className="space-y-8">
-            {features
-              .filter((_, i) => i % 2 === 1)
-              .map((feature, idx) => (
-                <div
-                  key={idx}
-                  className="feature-item-right group relative"
-                  style={{ animationDelay: `${idx * 0.2 + 0.1}s` }}
-                >
-                  <div className={`absolute inset-0 bg-linear-to-br ${feature.gradient} rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                  <div className="relative backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-orange-500/30 transition-all duration-300">
-                    <div className="flex gap-6 items-start">
-                      <div className="text-5xl shrink-0 group-hover:scale-110 transition-transform duration-300">
-                        {feature.icon}
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-semibold text-white mb-2">
-                          {feature.title}
-                        </h3>
-                        <p className="text-gray-300 leading-relaxed">
-                          {feature.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+          {/* Right — Sticky visualizer */}
+          <div className="hidden lg:block sticky top-[20vh] self-start">
+            <FeatureVisualizer
+              visuals={featureVisuals}
+              activeIndex={activeIdx}
+            />
           </div>
         </div>
-
-
       </div>
     </section>
   );
